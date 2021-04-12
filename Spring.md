@@ -1,11 +1,9 @@
-# Spring 
-
-## 依赖
+# 依赖
 ```bash
 A a = new b;
 ```
 a：被注入对象 b：被依赖对象
-## IoC
+# IoC
 
 ```bash
 Inversion of Control，中文通常翻译为“控制反转”，它还有一个别名叫做依赖注入（Dependency Injection）。
@@ -15,34 +13,34 @@ Inversion of Control，中文通常翻译为“控制反转”，它还有一个
 通常情况下，被注入对象会直接依赖于被依赖对象。但是，在IoC的场景中，二者之间通过IoC ServiceProvider来打交道，所有的被注入对象和依赖对象现在由IoC Service Provider统一管理。
 
 
-## IoC Service Provider
+# IoC Service Provider
 
-### 注入方式
+## 注入方式
 被注入对象又是通过三种方式来通知IoC Service Provider为其提供适当服务。
-#### 构造方法注入
+### 构造方法注入
 被注入对象可以通过在其构造方法中声明依赖对象的参数列表，让外部（通常是IoC容器）知道它需要哪些依赖对象。
 
-#### setter方法注入
+### setter方法注入
 通过setter方法，可以更改相应的对象属性，通过getter方法，可以获得相应属性的状态。所以，当前对象只要为其依赖对象所对应的属性添加setter方法，就可以通过setter方法将相应的依赖对象设置到被注入对象中。
 
-#### 接口注入
+### 接口注入
 被注入对象如果想要IoC ServiceProvider为其注入依赖对象，就必须实现某个接口。这个接口提供一个方法，用来为其注入依赖对象。IoC Service Provider最终通过这些接口来了解应该为被注入对象注入什么依赖对象。。
 
 (1.创建一个接口，包含一个方法A，该方法的参数为被依赖对象； 2. 实现该接口； 3.通过A方法注入对象）
 
 
-### 职责
+## 职责
 
-#### 业务对象的构建管理
+### 业务对象的构建管理
 在IoC场景中，业务对象无需关心所依赖的对象如何构建如何取得，但这部分工作始终需要有人来做。所以，IoC Service Provider需要将对象的构建逻辑从客户端对象那里剥离出来，以免这部分逻辑污染业务对象的实现。
 
-#### 业务对象间的依赖绑定
+### 业务对象间的依赖绑定
 IoC Service Provider通过结合之前构建和管理的所有业务对象，以及各个业务对象间可以识别的依赖关系，将这些对象所依赖的对象注入绑定，从而保证每个业务对象在使用的时候，可以处于就绪状态。
 
-#### 管理
+### 管理
 IoC Service Provider实现职责的方式。
 
-##### 直接编码方式
+#### 直接编码方式
 在容器启动之前，就可以通过程序编码的方式将被注入对象和依赖对象注册到容器中，并明确它们相互之间的依赖注入关系。
 ```bash
 IoContainer container = ...;
@@ -68,17 +66,17 @@ newProvider.getAndPersistNews();
 通过 bind 方法将“被注入对象”（由 IFXNewsListenerCallable 接口添加标志）所依赖的对象，绑定为容器中注册过的 IFXNewsListener 类型的对象实例。容器在返回 FXNewsProvider 对象实例之前，会根据这个绑定信息，将 IFXNewsListener 注册到容器中的对象实例注入到“被注入对象”——FXNewsProvider 中，并最终返回已经组装完毕的 FXNewsProvider 对象。
 （bind所实现的是接口注入中的第一步：将接口中的方法参数设置为被依赖对象。）
 
-##### 配置文件方式
+#### 配置文件方式
 这是一种较为普遍的依赖注入关系管理方式。最为常见的，还是通过XML文件来管理对象注册和对象间依赖关系。
 
 （后续详细介绍）
 
-##### 元数据方式（注解）
+#### 元数据方式（注解）
 直接在类中使用元数据信息来标注各个对象之间的依赖关系，然后由Guice框架根据这些注解所提供的信息将这些对象组装后，交给客户端对象使用。
 
 （后续详细介绍）
 
-## IoC容器
+# IoC容器
 Spring的IoC容器是一个IoC Service Provider，是一个提供IoC支持的轻量级容器。除了基本的IoC支持，它作为轻量级容器还提供了IoC之外的支持。
 <div  align="center"> <img src="https://user-images.githubusercontent.com/37955886/114380593-d4b94280-9bbc-11eb-902f-511f9ca9ffcc.png"/></div> 
 Spring提供了两种容器类型：BeanFactory 和 ApplicationContext。
@@ -102,14 +100,14 @@ BeanFactory 和 ApplicationContext的关系:ApplicationContext 间接继承自 B
 <div  align="center"> <img src="https://user-images.githubusercontent.com/37955886/114400742-dbec4a80-9bd4-11eb-9693-c5764464e4fb.png"/></div> 
 
 
-### BeanFactory
+## BeanFactory
 BeanFactory ，顾名思义，就是生产Bean的工厂.作为Spring提供的基本的IoC容器，BeanFactory 可以完成作为IoC Service Provider的所有职责，包括业务对象的注册和对象间依赖关系的绑定。
 
 针对系统和业务逻辑，该如何设计和实现当前系统不受是否引入轻量级容器的影响。前后唯一的不同，就是对象之间依赖关系的解决方式改变了。之前我们的系统业务对象需要自己去“拉”（Pull）所依赖的业务对象，有了 BeanFactory 之类的IoC容器之后，需要依赖什么让 BeanFactory 为我们推过来（Push）就行了。
 
-#### 对象注册与依赖绑定方式
+### 对象注册与依赖绑定方式
 
-##### 直接编码方式
+#### 直接编码方式
 
 <div  align="center"> <img src="https://user-images.githubusercontent.com/37955886/114403610-88c7c700-9bd7-11eb-976b-c7563d7ad966.png"/></div> 
 ```bash
@@ -121,7 +119,7 @@ BeanFactory ，顾名思义，就是生产Bean的工厂.作为Spring提供的基
         ChildBeanDefinition：BeanDefinition的主要实现类
 ```
 
-##### 外部配置文件方式
+#### 外部配置文件方式
 Spring的IoC容器支持两种配置文件格式：Properties文件格式和XML文件格式。
 
 ```bash
@@ -131,7 +129,7 @@ Spring的IoC容器支持两种配置文件格式：Properties文件格式和XML�
 4. BeanDefinitionRegistry即完成Bean的注册和加载。
 ```
 
-###### Properties
+##### Properties
 
 Spring提供了 org.springframework.beans.factory.support.PropertiesBeanDefinitionReader 类用于Properties格式配置文件的加载。
 ```bash
@@ -155,7 +153,7 @@ setter方法与构造方法的区别：
 构造方法注入无法通过参数名称来标识注入的确切位置，而setter方法注入则可以通过属性名称来明确标识注入。
 ```
 
-##### XML
+#### XML
 
 XML配置格式是Spring支持最完整，功能最强大的表达方式。大部分讲解还会沿用DTD的方式，只有必要时才会给出特殊说明。
 
@@ -181,15 +179,15 @@ XML配置格式是Spring支持最完整，功能最强大的表达方式。大�
 </beans>
 ```
 
-#### 注解方式
+### 注解方式
 
 通过注解标注的方式为 FXNewsProvider 注入所需要的依赖，现在可以使用 @Autowired 以及 @Component 对相关类进行标记。再向Spring的配置文件中增加一个“触发器”，使用 @Autowired 和 @Component 标注的类就能获得依赖对象的注入了。
 
-##### @Autowired
+#### @Autowired
 
 它的存在将告知Spring容器需要为当前对象注入哪些依赖对象。
 
-##### @Component
+#### @Component
 
 配合Spring 2.5中新的classpath-scanning功能使用的。
 
