@@ -6,7 +6,7 @@
 
 - [依赖](Spring.md#依赖)
 - [IoC](Spring.md#IoC)
-- [IoC Service Provider](Spring.md#IoC Service Provider)
+- [IoC Service Provider](Spring.md#IoC-Service-Provider)
   - [注入方式](Spring.md#注入方式)
   - [职责](Spring.md#职责)
 - [IoC容器](Spring.md#IoC容器)
