@@ -200,7 +200,8 @@ default-lazy-init：
 ```
 default-autowire：
 ```bash
-可以取值为 no 、 byName 、 byType 、 constructor 以及 autodetect 。默认值为 no ，如果使用自动绑定的话，用来标志全体bean使用哪一种默认绑定方式。
+可以取值为no、byName、byType、constructor以及autodetect。默认值为no，如果使用自动绑定的话，用来标志全体bean使用哪一种默认
+绑定方式。
 ```
 default-dependency-check：
 ```bash
@@ -208,13 +209,12 @@ default-dependency-check：
 ```
 default-init-method:
 ```bash
-如果所管辖的 <bean> 按照某种规则，都有同样名称的初始化方法的话，可以在这里统一指定这个初始化方法名，而
-不用在每一个 <bean> 上都重复单独指定。
+如果所管辖的 <bean> 按照某种规则，都有同样名称的初始化方法的话，可以在这里统一指定这个初始化方法名，而不用在每一个<bean>
+上都重复单独指定。
 ```
 default-destroy-method:
 ```bash
-与 default-init-method相对应，如果所管辖的bean有按照某种规则使用了相同名称的对象销毁方法，可以通过
-这个属性统一指定。
+与 default-init-method相对应，如果所管辖的bean有按照某种规则使用了相同名称的对象销毁方法，可以通过这个属性统一指定。
 ```
 \<beans> 是XML配置文件中最顶层的元素，它下面可以包含0或者1个\<description> 和多个\<bean>以及 \<import> 或者\<alias>。
 <div align="center"> <img src="https://user-images.githubusercontent.com/37955886/114528318-7b641880-9c7b-11eb-971f-5554115805a0.png"/></div> 
@@ -225,9 +225,8 @@ default-destroy-method:
 ```     
 \<import>
 ```bash
-通常情况下，可以根据模块功能或者层次关系，将配置信息分门别类地放到多个配置文件中。在
-想加载主要配置文件，并将主要配置文件所依赖的配置文件同时加载时，可以在这个主要的配置文件
-中通过 <import> 元素对其所依赖的配置文件进行引用。
+通常情况下，可以根据模块功能或者层次关系，将配置信息分门别类地放到多个配置文件中。在想加载主要配置文件，并将主要配置
+文件所依赖的配置文件同时加载时，可以在这个主要的配置文件中通过 <import> 元素对其所依赖的配置文件进行引用。
 ```
 \<alias>
 ```bash
@@ -242,8 +241,8 @@ default-destroy-method:
 id：
 
 ```bash
-id属性来指定当前注册对象的beanName是什么。这里，通过id指定beanName为djNewsListener。实际上，
-并非任何情况下都需要指定每个<bean>的id，有些情况下，id可以省略
+id属性来指定当前注册对象的beanName是什么。这里，通过id指定beanName为djNewsListener。实际上，并非任何情况下都需要
+指定每个<bean>的id，有些情况下，id可以省略
 ```
 name:
 
@@ -258,15 +257,14 @@ name:
 id和name区别：
 
 ```bash
-与 id 属性相比， name 属性的灵活之处在于， name 可以使用 id 不能使用的一些字符，比如/。而且
-还可以通过逗号、空格或者冒号分割指定多个 name 。 name 的作用跟使用 <alias> 为 id 指定多个别名基
-本相同
+与 id 属性相比， name 属性的灵活之处在于， name 可以使用 id 不能使用的一些字符，比如/。而且还可以通过逗号、空格
+或者冒号分割指定多个 name 。 name 的作用跟使用 <alias> 为 id 指定多个别名基本相同。
 ```
 
 class：
 ```bash
-每个注册到容器的对象都需要通过 <bean> 元素的 class 属性指定其类型，否则，容器可不知道这
-个对象到底是何方神圣。在大部分情况下，该属性是必须的,仅在少数情况下不需要指定.
+每个注册到容器的对象都需要通过 <bean> 元素的 class 属性指定其类型，否则，容器可不知道这个对象到底是何方神圣。
+在大部分情况下，该属性是必须的,仅在少数情况下不需要指定。
 ```
 
 ###### 表达依赖
