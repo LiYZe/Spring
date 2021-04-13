@@ -178,7 +178,358 @@ XML配置格式是Spring支持最完整，功能最强大的表达方式。大�
   </bean>
 </beans>
 ```
-##### beans和bean
+##### \<beans>和\<bean>
+
+\<bean>    
+
+```bash
+所有注册到容器的业务对象，在Spring中称之为Bean。所以，每一个对象在XML中的映射也自然而然地对应一个叫做 <bean> 的元素。
+```
+
+\<beans>
+
+```bash
+<bean> 的元素组织起来的，就叫做 <beans>,多个 <bean> 组成一个 <beans>。
+```
+
+属性（attribute）：
+
+default-lazy-init：
+```bash
+其值可以指定为 true 或者 false ，默认值为 false 。用来标志是否对所有的 <bean> 进行延迟初始化。
+```
+default-autowire：
+```bash
+可以取值为 no 、 byName 、 byType 、 constructor 以及 autodetect 。默认值为 no ，如果使用自动绑定的话，
+用来标志全体bean使用哪一种默认绑定方式。
+```
+default-dependency-check：
+```bash
+可以取值 none、objects、simple以及all，默认值为none，即不做依赖检查。
+```
+default-init-method:
+```bash
+如果所管辖的 <bean> 按照某种规则，都有同样名称的初始化方法的话，可以在这里统一指定这个初始化方法名，而
+不用在每一个 <bean> 上都重复单独指定。
+```
+default-destroy-method:
+```bash
+与 default-init-method相对应，如果所管辖的bean有按照某种规则使用了相同名称的对象销毁方法，可以通过
+这个属性统一指定。
+```
+\<beans> 是XML配置文件中最顶层的元素，它下面可以包含0或者1个\<description> 和多个\<bean>以及 \<import> 或者\<alias>。
+<div align="center"> <img src="https://user-images.githubusercontent.com/37955886/114528318-7b641880-9c7b-11eb-971f-5554115805a0.png"/></div> 
+
+\<description>
+```bash
+可以通过 <description> 在配置的文件中指定一些描述性的信息。通常情况下，该元素是省略的。
+```     
+\<import>
+```bash
+通常情况下，可以根据模块功能或者层次关系，将配置信息分门别类地放到多个配置文件中。在
+想加载主要配置文件，并将主要配置文件所依赖的配置文件同时加载时，可以在这个主要的配置文件
+中通过 <import> 元素对其所依赖的配置文件进行引用。
+```
+\<alias>
+```bash
+可以通过 <alias> 为某些 <bean> 起一些“外号”（别名），通常情况下是为了减少输入。
+```
+
+###### 配置方式
+
+```bash
+<bean id="djNewsListener" class="..impl.DowJonesNewsListener"></bean>
+```
+id：
+
+```bash
+id属性来指定当前注册对象的beanName是什么。这里，通过id指定beanName为djNewsListener。实际上，
+并非任何情况下都需要指定每个<bean>的id，有些情况下，id可以省略
+```
+name:
+
+除了可以使用 id 来指定\<bean>在容器中的标志，还可以使用 name 属性来指定\<bean> 的别名（alia）。
+```bash
+<bean id="djNewsListener"
+      name="/news/djNewsListener,dowJonesNewsListener"
+      class="..impl.DowJonesNewsListener">
+</bean>
+```
+
+id和name区别：
+
+```bash
+与 id 属性相比， name 属性的灵活之处在于， name 可以使用 id 不能使用的一些字符，比如/。而且
+还可以通过逗号、空格或者冒号分割指定多个 name 。 name 的作用跟使用 <alias> 为 id 指定多个别名基
+本相同
+```
+
+class：
+```bash
+每个注册到容器的对象都需要通过 <bean> 元素的 class 属性指定其类型，否则，容器可不知道这
+个对象到底是何方神圣。在大部分情况下，该属性是必须的,仅在少数情况下不需要指定.
+```
+
+###### 表达依赖
+
+1.构造方法注入XML：
+
+按照Spring的IoC容器配置格式，要通过构造方法注入方式，为当前业务对象注入其所依赖的对象，需要使用 \<constructor-arg>。
+      
+正常情况下，如以下代码所示：
+
+```bash
+<bean id="djNewsProvider" class="..FXNewsProvider">
+      <constructor-arg>
+            <ref bean="djNewsListener"/>
+      </constructor-arg>
+      <constructor-arg>
+            <ref bean="djNewsPersister"/>
+      </constructor-arg>
+</bean>
+      
+//简化形式 
+<bean id="djNewsProvider" class="..FXNewsProvider">
+      <constructor-arg ref="djNewsListener"/>
+      <constructor-arg ref="djNewsPersister"/>
+</bean>
+```
+```bash
+type属性:使用type属性指定构造方法的参数类型。
+index属性：使用index属性指定构造方法的某个位置的参数类型，取值从0开始。
+```
+
+2.setter方法注入的XML：
+
+Spring为setter方法注入提供了\<property>元素。\<property>有一个name属性（attribute），用来指定该\<property>将会注入的对象所对应的实例变量名称。之后通过value或者ref属性或者内嵌的其他元素来指定具体的依赖对象引用或者值。如果只是使用 <property> 进行依赖注入的话，请确保你的对象提供了默认的构造方法（无参构造函数）。
+
+如以下代码所示：
+```bash
+<bean id="djNewsProvider" class="..FXNewsProvider">
+      <property name="newsListener">
+            <ref bean="djNewsListener"/>
+      </property>
+      <property name="newPersistener">
+            <ref bean="djNewsPersister"/>
+      </property>
+</bean>
+
+//简化形式
+<bean id="djNewsProvider" class="..FXNewsProvider">
+      <property name="newsListener" ref="djNewsListener"/>
+      <property name="newPersistener" ref="djNewsPersister"/>
+<
+/bean>
+```
+\<property>和\<constructor-arg> 中可用的配置项:
+
+3.Spring提供了元素供我们使用，这包括bean、ref、idref、value、null、list、set、map、props.
+
+\<value>:
+```bash
+可以通过 value 为主体对象注入简单的数据类型，不但可以指定 String 类型的数据，而且可以指定其
+他Java语言中的原始类型以及它们的包装器（wrapper）类型，比如 int、Integer 等。容器在注入的时
+候，会做适当的转换工作.
+```
+
+\<ref>
+```bash
+使用ref来引用容器中其他的对象实例，可以通过ref的local、parent和bean属性来指定引用
+的对象的beanName 是什么。下面没有其他子元素可用。
+
+local：只能指定与当前配置的对象在同一个配置文件的对象定义的名称；
+parent：则只能指定位于当前容器的父容器中定义的对象引用；
+bean：则基本上通吃，所以，通常情况下，直接使用bean来指定对象引用就可以了。
+```
+
+\<idref>
+```bash
+如果要为当前对象注入所依赖的对象的名称，而不是引用，那么通常情况下，可以
+使用 <value> 来达到这个目的。使用idref，容器在解析配置时就可以检查这个
+beanName是否存在，而不用等到运行时才发现这个beanName对应的对象实例不存在。
+```
+
+内部\<bean>
+```bash
+使用 <ref> 可以引用容器中独立定义的对象定义。但有时，可能我们所依赖的对
+象只有当前一个对象引用，或者某个对象定义我们不想其他对象通过 <ref> 引用
+到它。这时，可以使用内嵌的 <bean> ，将这个私有的对象定义仅局限在当前对象。
+内部 <bean> 的配置只是在位置上有所差异，但配置项上与其他的 <bean> 是没有
+任何差别的。也就是说， <bean> 内嵌的所有元素，内部 <bean> 的 <bean> 同样
+可以使用。如果内部 <bean> 对应的对象还依赖于其他对象，你完全可以像其他独
+立的 <bean> 定义一样为其配置相关依赖，没有任何差别。
+```
+
+\<list>
+```bash
+<list> 对应注入对象类型为 java.util.List 及其子类或者数组类型的依赖对象。
+通过 <list> 可以有序地为当前对象注入以collection形式声明的依赖。
+```
+
+\<set>
+```bash
+如果说<list>可以帮你有序地注入一系列依赖的话，那么<set> 就是无序的，而且，
+对于 set 来说，元素的顺序本来就是无关紧要的。<set>对应注入Java Collection
+中类型为java.util.Set 或者其子类的依赖对象。
+```
+
+\<map>
+```bash
+映射（map）可以通过指定的键（key）来获取相应的值。 <map> 与 <list> 和 <set> 
+的相同点在于，都是为主体对象注入Collection类型的依赖，不同点在于它对应注入
+java.util.Map 或者其子类类型的依赖对象。
+
+对于 <map> 来说，它可以内嵌任意多个 <entry> ，每一个 <entry> 都需要为其指定一个键和一个值，
+就跟真正的 java.util.Map 所要求的一样。
+
+指定entry的键。可以使用 <entry> 的属性key或者key-ref来指定键，也可以使用<entry>的内嵌元素 
+<key> 来指定键，这完全看个人喜好，但两种方式可以达到相同的效果。在<key>内部，可以使用以上
+提到的任何元素来指定键，从简单的<value>到复杂的Collection，只要映射需要，你可以任意发挥。
+
+指定 entry 对应的值。 <entry> 内部可以使用的元素，除了 <key> 是用来指定键的，其他元素
+可以任意使用，来指定 entry 对应的值。除了之前提到的那些元素，还包括马上就要谈到的
+<props> 。如果对应的值只是简单的原始类型或者单一的对象引用，也可以直接使用 <entry>
+的 value 或者 value-ref 这两个属性来指定，从而省却多敲入几个字符的工作量。
+```
+\<props>
+```bash
+<props> 是简化后了的 <map> ，或者说是特殊化的 map ，该元素对应配置类型为java.util.Properties 
+的对象依赖。因为 Properties 只能指定 String 类型的键（key）和值，所以，<props> 的配置简化很多
+，只有固定的格式。每个<props> 可以嵌套多个<prop>，每个<prop>通过其 key 属性来指定键，在<prop>
+内部直接指定其所对应的值。<prop> 内部没有任何元素可以使用，只能指定字符串，这个是由 java.util.
+Properties 的语意决定的。
+```
+
+\<null/>
+```bash
+最后一个提到的元素是 <null/> ，这是最简单的一个元素，因为它只是一个空元素，而且通常使用到它的
+场景也不是很多。对于String 类型来说，如果通过value以这样的方式指定注入，即 <value></value> ，
+那么，得到的结果是"" ，而不是 null。所以，如果需要为这个string对应的值注入null的话，请使用<null/>。
+```
+
+4.depends-on
+
+系统中所有需要日志记录的类，都需要在这些类使用之前首先初始化log4j。那么，就会非显式地依赖于 SystemConfigurationSetup 的静态初始化块。如果ClassA 需要使用log4j，那么就必须在bean定义中使用 depends-on 来要求容器在初始化自身实例之前首先实例化SystemConfigurationSetup，以保证日志系统的可用，如下代码演示的正是这种情况：
+```bash
+<bean id="classAInstance" class="...ClassA"depends-on="configSetup"/>
+<bean id="configSetup" class="SystemConfigurationSetup"/>
+```
+你可以在ClassA的 depends-on 中通过逗号分割各个 beanName。
+
+5.autowire
+
+通过 <bean> 的 autowire 属性，可以指定当前bean定义采用某种类型的自动绑定模式。这样，你就无需手工明确指定该bean定义相关的依赖关系，从而也可以免去一些手工输入的工作量。Spring提供了5种自动绑定模式，即 no 、 byName 、 byType 、 constructor 和 autodetect ，下面是它们的具体介绍：
+     
+byName
+```bash
+按照类中声明的实例变量的名称，与XML配置文件中声明的bean定义的 beanName 的值进行匹配，相匹配
+的bean定义将被自动绑定到当前实例变量上。这种方式对类定义和配置的bean定义有一定的限制。
+
+<bean id="fooBean" class="...Foo" autowire="byName">
+</bean>
+<bean id="emphasisAttribute" class="...Bar">
+</bean>
+
+需要注意两点：
+第一，我们并没有明确指定 fooBean 的依赖关系，而仅指定了它的 autowire 属性为byName；
+第二，第二个bean定义的 id 为 emphasisAttribute ，与 Foo 类中的实例变量名称相同。
+```
+
+byType
+```bash
+如果指定当前bean定义的 autowire 模式为 byType ，那么，容器会根据当前bean定义类型，分析其
+相应的依赖对象类型，然后到容器所管理的所有bean定义中寻找与依赖对象类型相同的bean定义，然
+后将找到的符合条件的bean自动绑定到当前bean定义。如果没有找到，则不做设置。但如果找到
+多个，容器会告诉你它解决不了“该选用哪一个”的问题，你只好自己查找原因，并自己修正该问题。
+所以，byType只能保证，在容器中只存在一个符合条件的依赖对象的时候才会发挥最大的作用，如果
+容器中存在多个相同类型的bean定义，那么，不好意思，采用手动明确配置吧！
+
+指定 byType 类型的 autowire 模式与 byName 没什么差别，只是 autowire 的值换成 byType 而已。
+```
+
+constructor
+```bash
+constructor 类型则针对构造方法参数的类型而进行的自动绑定，它同样是 byType 类型的绑定模式。
+不过，constructor 是匹配构造方法的参数类型，而不是实例属性的类型。与 byType 模式类似，如果
+找到不止一个符合条件的bean定义，那么，容器会返回错误。使用上也与 byType 没有太大差别，
+只不过是应用到需要使用构造方法注入的bean定义之上。
+
+<bean id="foo" class="...Foo" autowire="constructor"/>
+<bean id="bar" class="...Bar">
+</bean>
+```
+
+autodetect
+```bash
+这种模式是 byType 和 constructor 模式的结合体，如果对象拥有默认无参数的构造方法，容器会
+优先考虑 byType 的自动绑定模式。否则，会使用 constructor 模式。当然，如果通过构造方法注入绑
+定后还有其他属性没有绑定，容器也会使用 byType 对剩余的对象属性进行自动绑定。
+```
+
+6.dependency-check
+
+使用每个\<bean> 的 dependency-check 属性对其所依赖的对象进行最终检查。该功能主要与自动绑定结合使用，可以保证当自动绑定完成后，最终确认每个对象所依赖的对象是否按照所预期的那样被注入。该功能可以帮我们检查每个对象某种类型的所有依赖是否全部已经注入完成，不过可能无法细化到具体的类型检查。但某些时候，使用setter方法注入就是为了拥有某种可以设置也可以不设置的灵活性所以，这种依赖检查并非十分有用，尤其是在手动明确绑定依赖关系的情况下。
+      
+基本上有如下4种类型的依赖检查:
+none 
+```bash
+不做依赖检查。将 dependency-check 指定为 none 跟不指定这个属性等效，所以，还是
+不要多敲那几个字符了吧。默认情况下，容器以此为默认值。
+```
+
+simple 
+```bash
+如果将 dependency-check 的值指定为 simple ，那么容器会对简单属性类型以及相
+关的collection进行依赖检查，对象引用类型的依赖除外。
+```
+
+object 
+```bash
+只对对象引用类型依赖进行检查。
+```
+
+all 
+```bash
+将 simple 和 object 相结合，也就是说会对简单属性类型以及相应的collection和所有对
+象引用类型的依赖进行检查。
+```
+7.lazy-init
+
+延迟初始化（lazy-init）这个特性的作用，主要是可以针对 ApplicationContext 容器的bean初始化行为施以更多控制。我们不想某些bean定义在容器启动后就直接实例化，想改变某个或者某些bean定义在ApplicationContext 容器中的默认实例化时机。这时，就可以通过\<bean>的lazy-init属性来控制这种初始化行为。
+```bash
+<bean id="lazy-init-bean" class="..." lazy-init="true"/>
+<bean id="not-lazy-init-bean" class="..."/>
+```
+
+###### 继承
+```bash
+<bean id="newsProviderTemplate" abstract="true">
+      <property name="newPersistener">
+            <ref bean="djNewsPersister"/>
+      </property>
+</bean>
+<bean id="superNewsProvider" parent="newsProviderTemplate"class="..FXNewsProvider">
+      <property name="newsListener">
+            <ref bean="djNewsListener"/>
+      </property>
+</bean>
+<bean id="subNewsProvider" parent="newsProviderTemplate"class="..SpecificFXNewsProvider">
+      <property name="newsListener">
+            <ref bean="specificNewsListener"/>
+      </property>
+</bean>
+```
+我们在声明 subNewsProvider 的时候，使用了 parent 属性，将其值指定为 superNewsProvider ，这样就继承了 superNewsProvider 定义的默认值，只需要将特定的属性进行更改，而不要全部又重新定义一遍。parent 属性还可以与 abstract 属性结合使用，达到将相应bean定义模板化的目的。
+
+abstract
+```bash
+newsProviderTemplate 的 bean 定义通过 abstract 属性声明为 true ，说明这个bean定义不需要实
+例化。实际上，这就是之前提到的可以不指定class属性的少数场景之一。容器在初始化对象实例的时候，
+不会关注将abstract 属性声明为 true 的bean定义。如果你不想容器在初始化的时候实例化某些对象，
+那么可以将其 abstract 属性赋值 true ，以避免容器将其实例化。
+```
+
+
 ### 注解方式
 
 通过注解标注的方式为 FXNewsProvider 注入所需要的依赖，现在可以使用 @Autowired 以及 @Component 对相关类进行标记。再向Spring的配置文件中增加一个“触发器”，使用 @Autowired 和 @Component 标注的类就能获得依赖对象的注入了。
