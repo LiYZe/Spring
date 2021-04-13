@@ -200,8 +200,7 @@ default-lazy-init：
 ```
 default-autowire：
 ```bash
-可以取值为 no 、 byName 、 byType 、 constructor 以及 autodetect 。默认值为 no ，如果使用自动绑定的话，
-用来标志全体bean使用哪一种默认绑定方式。
+可以取值为 no 、 byName 、 byType 、 constructor 以及 autodetect 。默认值为 no ，如果使用自动绑定的话，用来标志全体bean使用哪一种默认绑定方式。
 ```
 default-dependency-check：
 ```bash
