@@ -520,13 +520,131 @@ all
 
 abstract
 ```bash
-newsProviderTemplate 的 bean 定义通过 abstract 属性声明为 true ，说明这个bean定义不需要实
-例化。实际上，这就是之前提到的可以不指定class属性的少数场景之一。容器在初始化对象实例的时候，
-不会关注将abstract 属性声明为 true 的bean定义。如果你不想容器在初始化的时候实例化某些对象，
-那么可以将其 abstract 属性赋值 true ，以避免容器将其实例化。
+newsProviderTemplate 的 bean 定义通过 abstract 属性声明为 true ，说明这个bean定义不需要实例化。实际上，这就是之前提到的可以不
+指定class属性的少数场景之一。容器在初始化对象实例的时候，不会关注将abstract 属性声明为 true 的bean定义。如果你不想容器在初始化
+的时候实例化某些对象，那么可以将其 abstract 属性赋值true ，以避免容器将其实例化。
 ```
 
+###### scope
 
+scope用来声明容器中的对象所应该处的限定场景或者说该对象的存活时间，即容器在对象进入其相应的scope之前，生成并装配这些对象，在该对象不再处于这些scope的限定之后，容器通常会销毁Spring的IoC容器这些对象。
+
+Spring容器最初提供了两种bean的scope类型：singleton和prototype
+
+singleton
+```bash
+标记为拥有singleton scope的对象定义，在Spring的IoC容器中只存在一个实例，所有对该对象的引用将共享这个实例。该实例从容器启动，
+并因为第一次被请求而初始化之后，将一直存活到容器退出，也就是说，它与IoC容器“几乎”拥有相同的“寿命”。
+```
+
+prototype
+```bash
+针对声明为拥有prototype scope的bean定义，容器在接到该类型对象的请求的时候，会每次都重新生成一个新的对象实例给请求方。只要准
+备完毕，并且对象实例返回给请求方之后，容器就不再拥有当前返回对象的引用，请求方需要自己负责当前返回对象的后继生命周期的管理
+工作，包括该对象的销毁。也就是说，容器每次返回给请求方一个新的对象实例之后，就任由这个对象实例“自生自灭”了
+```
+
+自定义scope
+```bash
+首先需要给出一个 Scope 接口的实现类，接口定义中的4个方法并非都是必须的，但 get 和 remove 方法必须实现。
+
+public interface Scope {
+      Object get(String name, ObjectFactory objectFactory);
+      Object remove(String name);
+      void registerDestructionCallback(String name, Runnable callback);
+      String getConversationId();
+}
+```
+
+###### 工厂方法与 FactoryBean
+
+通过使用工厂方法（Factory Method）模式，提供一个工厂类来实例化具体的接口实现类，这样，主体对象只需要依赖工厂类，具体使用的实现类有变更的话，只是变更工厂类，而主体对象不需要做任何变动。
+
+1.静态工厂方法（Static Factory Method）
+```bash
+<bean id="foo" class="...Foo">
+      <property name="barInterface">
+            <ref bean="bar"/>
+      </property>
+</bean>
+<bean id="bar" class="...StaticBarInterfaceFactory" factory-method="getInstance"/>
+```
+class 指定静态方法工厂类， factory-method 指定工厂方法名称，然后，容器调用该静态方法工厂类的指定工厂方法（getInstance），并返回方法调用后的结果，即BarInterfaceImpl的实例。也就是说，为 foo 注入的 bar 实际上是 BarInterfaceImpl 的实例，即方法调用后的结果，而不是静态工厂方法类（StaticBarInterfaceFactory）。
+
+2.非静态工厂方法（Instance Factory Method）
+```bash
+<bean id="foo" class="...Foo">
+      <property name="barInterface">
+            <ref bean="bar"/>
+      </property>
+</bean>
+<bean id="barFactory" class="...NonStaticBarInterfaceFactory"/>
+<bean id="bar" factory-bean="barFactory" factory-method="getInstance"/>
+```
+NonStaticBarInterfaceFactory 是作为正常的bean注册到容器的，而 bar 的定义则与静态工厂方法的定义有些不同。现在使用 factory-bean 属性来指定工厂方法所在的工厂类实例，而不是通过class 属性来指定工厂方法所在类的类型。指定工厂方法名则相同，都是通过 factory-method 属性进行的。
+
+3. FactoryBean
+
+FactoryBean 是Spring容器提供的一种可以扩展容器对象实例化逻辑的接口，请不要将其与容器名称BeanFactory相混淆。它本身与其他注册到容器的对象一样，只是一个Bean而已，只不过，这种类型的Bean本身就是生产对象的工厂（Factory）。
+
+以下两种情况可以实现 org.spring-framework.beans.factory.FactoryBean 接口，给出自己的对象实例化逻辑代码。
+
+1.XML配置过于复杂，使我们宁愿使用Java代码来完成这个实例化过程的时候
+
+2.某些第三方库不能直接注册到Spring容器的时候
+
+```bash
+public interface FactoryBean {
+      Object getObject() throws Exception;
+      Class getObjectType();
+      boolean isSingleton();
+}
+
+getObject()方法会返回该 FactoryBean “生产”的对象实例，我们需要实现该方法以给出自己的对象实例化逻辑； 
+getObjectType()方法仅返回 getObject() 方法所返回的对象的类型，如果预先无法确定，则返回 null；
+isSingleton()方法返回结果用于表明，工厂方法（getObject()）所“生产”的对象是否要以singleton形式存在于容器中。
+如果以singleton形式存在，则返回 true ，否则返回 false；
+```
+
+###### 方法注入（Method-Injection）以及方法替换（Method-Replacement）
+
+bean的scope的使用“陷阱”，特别是prototype在容器中的使用。当使用prototype时，每个对象都应该是新的独立个体，但是当容器注入一个实例的时候，类有可能会一直持有这个实例的引用，虽然每次都返回了实例，但是都是第一次所注入的实例，没有重新注入实例。
+
+为此Spring使用了两个方法：方法注入（Method-Injection）以及方法替换（Method-Replacement）
+
+1. 方法注入
+
+让 getNewsBean 方法声明符合规定的格式，并在配置文件中通知容器，当该方法被调用的时候，每次返回指定类型的对象实例即可。方法声明需要符合的规格定义如下：
+```bash
+<public|protected> [abstract] <return-type> theMethodName(no-arguments);
+```
+该方法必须能够被子类实现或者覆写，因为容器会为我们要进行方法注入的对象使用Cglib动态生成一个子类实现，从而替代当前对象。
+
+2.方法替换
+
+（1）给出org.springframework.beans.factory.support.MethodReplacer的实现类，在这个类中实现将要替换的方法逻辑。
+（2）有了要替换的逻辑之后，我们就可以把这个逻辑通过 <replaced-method> 配置到 FXNewsProvider的bean定义中，使其生效。
+
+3.殊途同归
+
+除了使用方法注入来达到“每次调用都让容器返回新的对象实例”的目的，还可以使用其他方式达到相同的目的。下面给出其他两种解决类似问题的方法
+
+（1）使用 BeanFactoryAware 接口
+```bash
+Spring框架提供了一个 BeanFactoryAware 接口，容器在实例化实现了该接口的bean定义的过程中，会自动将容器本身注入该bean。
+这样，该bean就持有了它所处的 BeanFactory 的引用。 BeanFactory-Aware 的定义如下代码所示：
+
+public interface BeanFactoryAware {
+void setBeanFactory(BeanFactory beanFactory) throws BeansException;
+}
+```
+（2）使用 ObjectFactoryCreatingFactoryBean
+```bash
+ObjectFactoryCreatingFactoryBean是Spring提供的一个FactoryBean 实现，它返回一个ObjectFactory 实例。从 
+ObjectFactoryCreatingFactoryBean 返回的这个 ObjectFactory 实例可以为 我们返回容器管理的相关对象。 
+实际上，ObjectFactoryCreatingFactoryBean实现了BeanFactoryAware接口，它返回的ObjectFactory 实例只是
+特定于与Spring容器进行交互的一个实现而已。使用它的好处就是，隔离了客户端对象对BeanFactory的直接引用。
+```
 ### 注解方式
 
 通过注解标注的方式为 FXNewsProvider 注入所需要的依赖，现在可以使用 @Autowired 以及 @Component 对相关类进行标记。再向Spring的配置文件中增加一个“触发器”，使用 @Autowired 和 @Component 标注的类就能获得依赖对象的注入了。
