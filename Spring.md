@@ -324,9 +324,8 @@ Spring为setter方法注入提供了\<property>元素。\<property>有一个name
 
 \<value>:
 ```bash
-可以通过 value 为主体对象注入简单的数据类型，不但可以指定 String 类型的数据，而且可以指定其
-他Java语言中的原始类型以及它们的包装器（wrapper）类型，比如 int、Integer 等。容器在注入的时
-候，会做适当的转换工作.
+可以通过 value 为主体对象注入简单的数据类型，不但可以指定 String 类型的数据，而且可以指定其他Java语言中的原始类型以及
+它们的包装器（wrapper）类型，比如 int、Integer 等。容器在注入的时候，会做适当的转换工作。
 ```
 
 \<ref>
@@ -341,67 +340,55 @@ bean：则基本上通吃，所以，通常情况下，直接使用bean来指定
 
 \<idref>
 ```bash
-如果要为当前对象注入所依赖的对象的名称，而不是引用，那么通常情况下，可以
-使用 <value> 来达到这个目的。使用idref，容器在解析配置时就可以检查这个
-beanName是否存在，而不用等到运行时才发现这个beanName对应的对象实例不存在。
+如果要为当前对象注入所依赖的对象的名称，而不是引用，那么通常情况下，可以使用 <value> 来达到这个目的。
+使用idref，容器在解析配置时就可以检查这个beanName是否存在，而不用等到运行时才发现这个beanName对应的对象实例不存在。
 ```
 
 内部\<bean>
 ```bash
-使用 <ref> 可以引用容器中独立定义的对象定义。但有时，可能我们所依赖的对
-象只有当前一个对象引用，或者某个对象定义我们不想其他对象通过 <ref> 引用
-到它。这时，可以使用内嵌的 <bean> ，将这个私有的对象定义仅局限在当前对象。
-内部 <bean> 的配置只是在位置上有所差异，但配置项上与其他的 <bean> 是没有
-任何差别的。也就是说， <bean> 内嵌的所有元素，内部 <bean> 的 <bean> 同样
-可以使用。如果内部 <bean> 对应的对象还依赖于其他对象，你完全可以像其他独
+使用 <ref> 可以引用容器中独立定义的对象定义。但有时，可能我们所依赖的对象只有当前一个对象引用，或者某个对象定义我们不想其他对象通过 <ref> 引用
+到它。这时，可以使用内嵌的 <bean> ，将这个私有的对象定义仅局限在当前对象。内部 <bean> 的配置只是在位置上有所差异，但配置项上与其他的 <bean> 是没有
+任何差别的。也就是说， <bean> 内嵌的所有元素，内部 <bean> 的 <bean> 同样可以使用。如果内部 <bean> 对应的对象还依赖于其他对象，你完全可以像其他独
 立的 <bean> 定义一样为其配置相关依赖，没有任何差别。
 ```
 
 \<list>
 ```bash
-<list> 对应注入对象类型为 java.util.List 及其子类或者数组类型的依赖对象。
-通过 <list> 可以有序地为当前对象注入以collection形式声明的依赖。
+<list> 对应注入对象类型为 java.util.List 及其子类或者数组类型的依赖对象。通过 <list> 可以有序地为当前对象注入以collection形式声明的依赖。
 ```
 
 \<set>
 ```bash
-如果说<list>可以帮你有序地注入一系列依赖的话，那么<set> 就是无序的，而且，
-对于 set 来说，元素的顺序本来就是无关紧要的。<set>对应注入Java Collection
-中类型为java.util.Set 或者其子类的依赖对象。
+如果说<list>可以帮你有序地注入一系列依赖的话，那么<set> 就是无序的，而且，对于 set 来说，元素的顺序本来就是无关紧要的。
+<set>对应注入Java Collection中类型为java.util.Set 或者其子类的依赖对象。
 ```
 
 \<map>
 ```bash
-映射（map）可以通过指定的键（key）来获取相应的值。 <map> 与 <list> 和 <set> 
-的相同点在于，都是为主体对象注入Collection类型的依赖，不同点在于它对应注入
-java.util.Map 或者其子类类型的依赖对象。
+映射（map）可以通过指定的键（key）来获取相应的值。 <map> 与 <list> 和 <set> 的相同点在于，都是为主体对象注入Collection类型的依赖，
+不同点在于它对应注入java.util.Map 或者其子类类型的依赖对象。
 
-对于 <map> 来说，它可以内嵌任意多个 <entry> ，每一个 <entry> 都需要为其指定一个键和一个值，
-就跟真正的 java.util.Map 所要求的一样。
+对于 <map> 来说，它可以内嵌任意多个 <entry> ，每一个 <entry> 都需要为其指定一个键和一个值，就跟真正的 java.util.Map 所要求的一样。
 
-指定entry的键。可以使用 <entry> 的属性key或者key-ref来指定键，也可以使用<entry>的内嵌元素 
-<key> 来指定键，这完全看个人喜好，但两种方式可以达到相同的效果。在<key>内部，可以使用以上
-提到的任何元素来指定键，从简单的<value>到复杂的Collection，只要映射需要，你可以任意发挥。
+指定entry的键。可以使用 <entry> 的属性key或者key-ref来指定键，也可以使用<entry>的内嵌元素 <key> 来指定键,但两种方式可以达到相同的
+效果。在<key>内部，可以使用以上提到的任何元素来指定键，从简单的<value>到复杂的Collection。
 
-指定 entry 对应的值。 <entry> 内部可以使用的元素，除了 <key> 是用来指定键的，其他元素
-可以任意使用，来指定 entry 对应的值。除了之前提到的那些元素，还包括马上就要谈到的
-<props> 。如果对应的值只是简单的原始类型或者单一的对象引用，也可以直接使用 <entry>
-的 value 或者 value-ref 这两个属性来指定，从而省却多敲入几个字符的工作量。
+指定 entry 对应的值。 <entry> 内部可以使用的元素，除了 <key> 是用来指定键的，其他元素可以任意使用，来指定 entry 对应的值。
+除了之前提到的那些元素，还包括马上就要谈到的<props> 。如果对应的值只是简单的原始类型或者单一的对象引用，也可以直接使用
+<entry>的 value 或者 value-ref 这两个属性来指定，从而省却多敲入几个字符的工作量。
 ```
 \<props>
 ```bash
-<props> 是简化后了的 <map> ，或者说是特殊化的 map ，该元素对应配置类型为java.util.Properties 
-的对象依赖。因为 Properties 只能指定 String 类型的键（key）和值，所以，<props> 的配置简化很多
-，只有固定的格式。每个<props> 可以嵌套多个<prop>，每个<prop>通过其 key 属性来指定键，在<prop>
-内部直接指定其所对应的值。<prop> 内部没有任何元素可以使用，只能指定字符串，这个是由 java.util.
-Properties 的语意决定的。
+<props>是简化后了的 <map> ，或者说是特殊化的 map ，该元素对应配置类型为java.util.Properties 的对象依赖。因为 Properties 
+只能指定 String 类型的键（key）和值，所以，<props> 的配置简化很多，只有固定的格式。每个<props> 可以嵌套多个<prop>，
+每个<prop>通过其 key 属性来指定键，在<prop>内部直接指定其所对应的值。<prop> 内部没有任何元素可以使用，只能指定字符串，
+这个是由 java.util.Properties 的语意决定的。
 ```
 
 \<null/>
 ```bash
-最后一个提到的元素是 <null/> ，这是最简单的一个元素，因为它只是一个空元素，而且通常使用到它的
-场景也不是很多。对于String 类型来说，如果通过value以这样的方式指定注入，即 <value></value> ，
-那么，得到的结果是"" ，而不是 null。所以，如果需要为这个string对应的值注入null的话，请使用<null/>。
+<null/> 是最简单的一个元素，因为它只是一个空元素，而且通常使用到它的场景也不是很多。对于String 类型来说，如果通过value
+以这样的方式指定注入，即<value></value>得到的结果是"" ，而不是null。所以，如果需要为这个string对应的值注入null的话，请使用<null/>。
 ```
 
 4.depends-on
@@ -415,12 +402,12 @@ Properties 的语意决定的。
 
 5.autowire
 
-通过 <bean> 的 autowire 属性，可以指定当前bean定义采用某种类型的自动绑定模式。这样，你就无需手工明确指定该bean定义相关的依赖关系，从而也可以免去一些手工输入的工作量。Spring提供了5种自动绑定模式，即 no 、 byName 、 byType 、 constructor 和 autodetect ，下面是它们的具体介绍：
+通过 <bean> 的autowire属性，可以指定当前bean定义采用某种类型的自动绑定模式。这样，无需手工明确指定该bean定义相关的依赖关系，从而也可以免去一些手工输入的工作量。Spring提供了5种自动绑定模式，即no、byName 、byType、constructor和autodetect，下面是它们的具体介绍：
      
 byName
 ```bash
-按照类中声明的实例变量的名称，与XML配置文件中声明的bean定义的 beanName 的值进行匹配，相匹配
-的bean定义将被自动绑定到当前实例变量上。这种方式对类定义和配置的bean定义有一定的限制。
+按照类中声明的实例变量的名称，与XML配置文件中声明的bean定义的 beanName 的值进行匹配，相匹配的bean定义将被自动绑定到当前实例变量上。
+这种方式对类定义和配置的bean定义有一定的限制。
 
 <bean id="fooBean" class="...Foo" autowire="byName">
 </bean>
@@ -434,21 +421,18 @@ byName
 
 byType
 ```bash
-如果指定当前bean定义的 autowire 模式为 byType ，那么，容器会根据当前bean定义类型，分析其
-相应的依赖对象类型，然后到容器所管理的所有bean定义中寻找与依赖对象类型相同的bean定义，然
-后将找到的符合条件的bean自动绑定到当前bean定义。如果没有找到，则不做设置。但如果找到
-多个，容器会告诉你它解决不了“该选用哪一个”的问题，你只好自己查找原因，并自己修正该问题。
-所以，byType只能保证，在容器中只存在一个符合条件的依赖对象的时候才会发挥最大的作用，如果
-容器中存在多个相同类型的bean定义，那么，不好意思，采用手动明确配置吧！
+如果指定当前bean定义的 autowire 模式为 byType ，那么，容器会根据当前bean定义类型，分析其相应的依赖对象类型，然后到容器所管理的所有
+bean定义中寻找与依赖对象类型相同的bean定义，然后将找到的符合条件的bean自动绑定到当前bean定义。如果没有找到，则不做设置。但如果找到
+多个，容器会告诉你它解决不了“该选用哪一个”的问题，你只好自己查找原因，并自己修正该问题。所以，byType只能保证，在容器中只存在一个符
+合条件的依赖对象的时候才会发挥最大的作用，如果容器中存在多个相同类型的bean定义，那么，不好意思，采用手动明确配置吧！
 
 指定 byType 类型的 autowire 模式与 byName 没什么差别，只是 autowire 的值换成 byType 而已。
 ```
 
 constructor
 ```bash
-constructor 类型则针对构造方法参数的类型而进行的自动绑定，它同样是 byType 类型的绑定模式。
-不过，constructor 是匹配构造方法的参数类型，而不是实例属性的类型。与 byType 模式类似，如果
-找到不止一个符合条件的bean定义，那么，容器会返回错误。使用上也与 byType 没有太大差别，
+constructor 类型则针对构造方法参数的类型而进行的自动绑定，它同样是 byType 类型的绑定模式。不过，constructor是匹配构造方法的参数类型，
+而不是实例属性的类型。与 byType 模式类似，如果找到不止一个符合条件的bean定义，那么，容器会返回错误。使用上也与 byType 没有太大差别，
 只不过是应用到需要使用构造方法注入的bean定义之上。
 
 <bean id="foo" class="...Foo" autowire="constructor"/>
@@ -458,9 +442,8 @@ constructor 类型则针对构造方法参数的类型而进行的自动绑定�
 
 autodetect
 ```bash
-这种模式是 byType 和 constructor 模式的结合体，如果对象拥有默认无参数的构造方法，容器会
-优先考虑 byType 的自动绑定模式。否则，会使用 constructor 模式。当然，如果通过构造方法注入绑
-定后还有其他属性没有绑定，容器也会使用 byType 对剩余的对象属性进行自动绑定。
+这种模式是 byType 和 constructor 模式的结合体，如果对象拥有默认无参数的构造方法，容器会优先考虑byType的自动绑定模式。否则，
+会使用constructor模式。当然，如果通过构造方法注入绑定后还有其他属性没有绑定，容器也会使用byType对剩余的对象属性进行自动绑定。
 ```
 
 6.dependency-check
@@ -470,14 +453,12 @@ autodetect
 基本上有如下4种类型的依赖检查:
 none 
 ```bash
-不做依赖检查。将 dependency-check 指定为 none 跟不指定这个属性等效，所以，还是
-不要多敲那几个字符了吧。默认情况下，容器以此为默认值。
+不做依赖检查。将 dependency-check 指定为 none 跟不指定这个属性等效，默认情况下，容器以此为默认值。
 ```
 
 simple 
 ```bash
-如果将 dependency-check 的值指定为 simple ，那么容器会对简单属性类型以及相
-关的collection进行依赖检查，对象引用类型的依赖除外。
+如果将 dependency-check 的值指定为 simple ，那么容器会对简单属性类型以及相关的collection进行依赖检查，对象引用类型的依赖除外。
 ```
 
 object 
@@ -487,8 +468,7 @@ object
 
 all 
 ```bash
-将 simple 和 object 相结合，也就是说会对简单属性类型以及相应的collection和所有对
-象引用类型的依赖进行检查。
+将 simple 和 object 相结合，也就是说会对简单属性类型以及相应的collection和所有对象引用类型的依赖进行检查。
 ```
 7.lazy-init
 
@@ -601,8 +581,10 @@ public interface FactoryBean {
 }
 
 getObject()方法会返回该 FactoryBean “生产”的对象实例，我们需要实现该方法以给出自己的对象实例化逻辑； 
+
 getObjectType()方法仅返回 getObject() 方法所返回的对象的类型，如果预先无法确定，则返回 null；
-isSingleton()方法返回结果用于表明，工厂方法（getObject()）所“生产”的对象是否要以singleton形式存在于容器中。
+
+isSingleton()方法返回结果用于表明，工厂方法(getObject())所“生产”的对象是否要以singleton形式存在于容器中。
 如果以singleton形式存在，则返回 true ，否则返回 false；
 ```
 
@@ -612,7 +594,7 @@ bean的scope的使用“陷阱”，特别是prototype在容器中的使用。�
 
 为此Spring使用了两个方法：方法注入（Method-Injection）以及方法替换（Method-Replacement）
 
-1. 方法注入
+1.方法注入
 
 让 getNewsBean 方法声明符合规定的格式，并在配置文件中通知容器，当该方法被调用的时候，每次返回指定类型的对象实例即可。方法声明需要符合的规格定义如下：
 ```bash
@@ -631,8 +613,8 @@ bean的scope的使用“陷阱”，特别是prototype在容器中的使用。�
 
 （1）使用 BeanFactoryAware 接口
 ```bash
-Spring框架提供了一个 BeanFactoryAware 接口，容器在实例化实现了该接口的bean定义的过程中，会自动将容器本身注入该bean。
-这样，该bean就持有了它所处的 BeanFactory 的引用。 BeanFactory-Aware 的定义如下代码所示：
+Spring框架提供了一个 BeanFactoryAware 接口，容器在实例化实现了该接口的bean定义的过程中，会自动将容器本身注入该bean。这样，该bean就
+持有了它所处的 BeanFactory 的引用。 BeanFactory-Aware 的定义如下代码所示：
 
 public interface BeanFactoryAware {
 void setBeanFactory(BeanFactory beanFactory) throws BeansException;
@@ -640,10 +622,9 @@ void setBeanFactory(BeanFactory beanFactory) throws BeansException;
 ```
 （2）使用 ObjectFactoryCreatingFactoryBean
 ```bash
-ObjectFactoryCreatingFactoryBean是Spring提供的一个FactoryBean 实现，它返回一个ObjectFactory 实例。从 
-ObjectFactoryCreatingFactoryBean 返回的这个 ObjectFactory 实例可以为 我们返回容器管理的相关对象。 
-实际上，ObjectFactoryCreatingFactoryBean实现了BeanFactoryAware接口，它返回的ObjectFactory 实例只是
-特定于与Spring容器进行交互的一个实现而已。使用它的好处就是，隔离了客户端对象对BeanFactory的直接引用。
+ObjectFactoryCreatingFactoryBean是Spring提供的一个FactoryBean 实现，它返回一个ObjectFactory 实例。从 ObjectFactoryCreatingFactoryBean 
+返回的这个 ObjectFactory 实例可以为 我们返回容器管理的相关对象。 实际上，ObjectFactoryCreatingFactoryBean实现了BeanFactoryAware接口，
+它返回的ObjectFactory 实例只是特定于与Spring容器进行交互的一个实现而已。使用它的好处就是，隔离了客户端对象对BeanFactory的直接引用。
 ```
 ### 注解方式
 
