@@ -346,15 +346,15 @@ bean：则基本上通吃，所以，通常情况下，直接使用bean来指定
 
 内部\<bean>
 ```bash
-使用 <ref> 可以引用容器中独立定义的对象定义。但有时，可能我们所依赖的对象只有当前一个对象引用，或者某个对象定义我们不想其他对象通过 <ref> 引用
-到它。这时，可以使用内嵌的 <bean> ，将这个私有的对象定义仅局限在当前对象。内部 <bean> 的配置只是在位置上有所差异，但配置项上与其他的 <bean> 是没有
-任何差别的。也就是说， <bean> 内嵌的所有元素，内部 <bean> 的 <bean> 同样可以使用。如果内部 <bean> 对应的对象还依赖于其他对象，你完全可以像其他独
-立的 <bean> 定义一样为其配置相关依赖，没有任何差别。
+使用 <ref>可以引用容器中独立定义的对象定义。但有，可能我们所依赖的对象只有当前一个对象引用，或者某个对象定义我们不想其他对象通过<ref>引用
+到它。这时，可使用内嵌的<bean> ，将这个私有的对象定义仅局限在当前对象。内部 <bean>的配置只是在位置上有所差异，但配置项上与其他的<bean>是没有
+任何差别的。也就是，<bean>内嵌的所有元素，内部<bean>的<bean>同样可以使用。如果内部<bean>对应的对象还依赖于其他对象，你完全可以像其他独
+立的<bean>定义一样为其配置相关依赖，没有任何差别。
 ```
 
 \<list>
 ```bash
-<list> 对应注入对象类型为 java.util.List 及其子类或者数组类型的依赖对象。通过 <list> 可以有序地为当前对象注入以collection形式声明的依赖。
+<list>对应注入对象类型为java.util.List 及其子类或者数组类型的依赖对象。通过<list>可以有序地为当前对象注入以collection形式声明的依赖。
 ```
 
 \<set>
@@ -622,9 +622,9 @@ void setBeanFactory(BeanFactory beanFactory) throws BeansException;
 ```
 （2）使用 ObjectFactoryCreatingFactoryBean
 ```bash
-ObjectFactoryCreatingFactoryBean是Spring提供的一个FactoryBean 实现，它返回一个ObjectFactory 实例。从 ObjectFactoryCreatingFactoryBean 
-返回的这个 ObjectFactory 实例可以为 我们返回容器管理的相关对象。 实际上，ObjectFactoryCreatingFactoryBean实现了BeanFactoryAware接口，
-它返回的ObjectFactory 实例只是特定于与Spring容器进行交互的一个实现而已。使用它的好处就是，隔离了客户端对象对BeanFactory的直接引用。
+ObjectFactoryCreatingFactoryBean是Spring提供的一个FactoryBean实现，返回一个ObjectFactory实例。从ObjectFactoryCreatingFactoryBean 
+返回的这个ObjectFactory实例可以为 我们返回容器管理的相关对象。 实际上，ObjectFactoryCreatingFactoryBean实现了BeanFactoryAware接口，
+它返回的ObjectFactory实例只是特定于与Spring容器进行交互的一个实现而已。使用它的好处就是，隔离了客户端对象对BeanFactory的直接引用。
 ```
 ### 注解方式
 
