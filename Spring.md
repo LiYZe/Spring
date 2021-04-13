@@ -178,7 +178,7 @@ XML配置格式是Spring支持最完整，功能最强大的表达方式。大�
   </bean>
 </beans>
 ```
-
+##### beans和bean
 ### 注解方式
 
 通过注解标注的方式为 FXNewsProvider 注入所需要的依赖，现在可以使用 @Autowired 以及 @Component 对相关类进行标记。再向Spring的配置文件中增加一个“触发器”，使用 @Autowired 和 @Component 标注的类就能获得依赖对象的注入了。
