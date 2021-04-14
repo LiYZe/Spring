@@ -656,7 +656,8 @@ Spring的IoC容器所起的作用：以某种方式加载Configuration Metadata�
 常用的BeanFactoryPostProcessor实现类：
 ```bash
 1.org.springframework.beans.factory.config.PropertyPlaceholderConfigurer:
-PropertyPlaceholderConfigurer允许我们在XML配置文件中使用占位符（PlaceHolder），并将这些占位符所代表的资源单独配置到简单的properties文件中来加载。
+PropertyPlaceholderConfigurer允许我们在XML配置文件中使用占位符（PlaceHolder），并将这些占位符所代表的资源单独配置到
+简单的properties文件中来加载。
 
 2.org.springframework.beans.factory.config.PropertyOverrideConfigurer
 可以通过占位符，来明确表明bean定义中的property与properties文件中的各配置项之间的对应关系。通过PropertyOverrideConfigurer
