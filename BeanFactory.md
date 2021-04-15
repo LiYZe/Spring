@@ -470,6 +470,8 @@ public interface Scope {
 
 通过使用工厂方法（Factory Method）模式，提供一个工厂类来实例化具体的接口实现类，这样，主体对象只需要依赖工厂类，具体使用的实现类有变更的话，只是变更工厂类，而主体对象不需要做任何变动。
 
+（[工厂方法](https://www.runoob.com/design-pattern/factory-pattern.html)）
+
 ###### 静态工厂方法（Static Factory Method）
 ```bash
 public class StaticBarInterfaceFactory
