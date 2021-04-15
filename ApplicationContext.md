@@ -156,7 +156,7 @@ ApplicationContext ctx = new FileSystemXmlApplicationContext("classpath:conf/app
 ```
 这时，FileSystemXmlApplicationContext就是从Classpath中加载配置，而不是从文件系统中加载。也就是说，它现在对应的是 ClassPathResource 类型的资源，而不是默认的 FileSystemResource类型资源。FileSystemXmlApplicationContext之所以如此，是因为它与org.springframework.core.io.FileSystemResourceLoader 一样，也覆写了DefaultResourceLoader的getRes-ourceByPath(String)方法，逻辑跟FileSystemResourceLoader一模一样。
 
-# 国际化信息支持（I18n MessageSource）
+# 国际化信息支持
 
 对于Java中的国际化信息处理，主要涉及两个类，即java.util.Locale和java.util.ResourceBundle。
 
