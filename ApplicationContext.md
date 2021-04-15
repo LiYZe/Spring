@@ -187,6 +187,7 @@ messages_en_US.properties
 ## MessageSource
 
 Spring在Java SE的国际化支持的基础上，进一步抽象了国际化信息的访问接口，也就是org.springframework.context.MessageSource ，该接口定义如下：
+
 ```bash
 public interface MessageSource {
   String getMessage(String code, Object[] args, String defaultMessage, Locale locale);
@@ -204,17 +205,17 @@ public interface MessageSource {
 
 根据传入的资源条目的键（对应方法声明中的code参数）、信息参数以及Locale来查找信息，如果对应信息没有找到，则返回指定的 defaultMessage 。
 
-#### String getMessage(String code, Object[] args, Locale locale) throws NoSuch-
+#### String getMessage(String code, Object[] args, Locale locale) throws NoSuch MessageException
 
-MessageException。与第一个方法相同，只不过，因为没有指定默认信息，当对应的信息找不到的情况下，将抛出NoSuchMessageException异常。
+与第一个方法相同，只不过，因为没有指定默认信息，当对应的信息找不到的情况下，将抛出NoSuchMessageException异常。
 
-#### String getMessage(MessageSourceResolvable resolvable, Locale locale) throws-
+#### String getMessage(MessageSourceResolvable resolvable, Locale locale) throws NoSuchMessageException
 
-NoSuchMessageException。使用MessageSourceResolvable对象对资源条目的键、信息参数等进行封装，将封住了这些信息的MessageSourceResolvable对象作为查询参数来调用以上方法。如果根据MessageSourceResolvable中的信息查找不到相应条目内容，将抛出NoSuchMessageException异常。
+使用MessageSourceResolvable对象对资源条目的键、信息参数等进行封装，将封住了这些信息的MessageSourceResolvable对象作为查询参数来调用以上方法。如果根据MessageSourceResolvable中的信息查找不到相应条目内容，将抛出NoSuchMessageException异常。
 
 ### 实现
 
-Spring提供了三种 MessageSource 的实现，即 StaticMessageSource 、 ResourceBundleMessage-Source 和 ReloadableResourceBundleMessageSource 。这三种实现都可以独立于容器并在独立运行（Standalone形式）的应用程序中使用，而并非只能依托 ApplicationContext 才可使用。
+Spring提供了三 MessageSource的实现，即StaticMessageSource、ResourceBundleMessage-Source和ReloadableResourceBundleMessageSource。这三种实现都可以独立于容器并在独立运行（Standalone形式）的应用程序中使用，而并非只能依托ApplicationContext才可使用。
 
 #### org.springframework.context.support.StaticMessageSource 
 
@@ -226,7 +227,7 @@ MessageSource 接口的简单实现，可以通过编程的方式添加信息条
 
 #### org.springframework.context.support.ReloadableResourceBundleMessageSource
 
-同样基于标准的 java.util.ResourceBundle 而构建的 MessageSource实现类 ，但通过其cacheSeconds 属性可以指定时间段，以定期刷新并检查底层的properties资源文件是否有变更。对于properties资源文件的加载方式也与 ResourceBundleMessageSource 有所不同，可以通过ResourceLoader 来加载信息资源文件。使用 ReloadableResourceBundleMessageSource 时，应该避免将信息资源文件放到classpath中，因为这无助于 ReloadableResourceBundle-MessageSource 定期加载文件变更。更多信息参照该类的Javadoc。
+同样基于标准的 java.util.ResourceBundle 而构建的MessageSource实现类，但通过其cacheSeconds 属性可以指定时间段，以定期刷新并检查底层的properties资源文件是否有变更。对于properties资源文件的加载方式也与 ResourceBundleMessageSource 有所不同，可以通过ResourceLoader 来加载信息资源文件。使用 ReloadableResourceBundleMessageSource 时，应该避免将信息资源文件放到classpath中，因为这无助于 ReloadableResourceBundle-MessageSource 定期加载文件变更。更多信息参照该类的Javadoc。
 
 <div align="center"><img src="https://user-images.githubusercontent.com/37955886/114850703-a2ede900-9e13-11eb-97e6-20a2592c3a88.png"/></div> 
 
