@@ -532,6 +532,10 @@ isSingleton()方法返回结果用于表明，工厂方法(getObject())所“生
 
 bean的scope的使用“陷阱”，特别是prototype在容器中的使用。当使用prototype时，每个对象都应该是新的独立个体，但是当容器注入一个实例的时候，类有可能会一直持有这个实例的引用，虽然每次都返回了实例，但是都是第一次所注入的实例，没有重新注入实例。
 
+无状态Bean的作用域一般可以配置为singleton（单例模式），如果我们往singleton的Boss中注入prototype的Car，并希望每次调用bossBean的getCar()方法时都能够返回一个新的carBean，使用传统的注入方式将无法实现这样的要求。因为singleton的Bean注入关联Bean的动作仅有一次，虽然carBean的作用范围是prototype类型，但Boss通过getCar()方法返回的对象还是最开始注入的那个carBean。
+
+（[方法注入](https://www.cnblogs.com/jwen1994/p/11048658.html)）
+
 为此Spring使用了两个方法：方法注入（Method-Injection）以及方法替换（Method-Replacement）
 
 ###### 方法注入
