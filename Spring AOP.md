@@ -58,7 +58,7 @@ InvocationHandler就是实现横切逻辑的地方，是很且逻辑的载体，
 
 CGLIB可以对实现了某种接口的类，或者没有实现任何接口的类进行扩展。使用CGLIB对类进行扩展的唯一限制就是无法对final方法进行覆写。
 
-## Joinpoint
+# Joinpoint
 
 仅支持方法级别的Joinpoin，确切地说，只支持方法执行类型的Joinpoint。
 
@@ -66,7 +66,7 @@ CGLIB可以对实现了某种接口的类，或者没有实现任何接口的类
 
 如果超出了需求支持，可以使用AspectJ。
 
-## Pointcut
+# Pointcut
 
 Spring中以接口定义org.springframework.aop.Pointcut作为其AOP框架中所有Pointcut的最顶层抽象，该接口定义了两个方法帮助捕捉系统中的相应Joinpoint，并提供了一个TruePointcut类型实例。如果Pointcut类型为TruePointcut，默认会对系统中的所有对象，以及对象上所有被支持的Joinpoint进行匹配。
 
@@ -82,7 +82,7 @@ public interface Pointcut{
 
 ClassFilter和MethodMatcher分别用于匹配将被执行织入操作的的对象以及相应的方法。将类型匹配和方法匹配分开定义的原因是可以重用不同级别的匹配定义，并且可以在不同的级别或者相同的级别上进行组合操作，或者强制让某个子类只覆写相应的方法定义等。
 
-### ClassFilter
+## ClassFilter
 
 ClassFilter接口的作用是对Joinpoint所处的对象进行Class级别的类型匹配，定义如下：
 
@@ -95,7 +95,7 @@ public interface ClassFilter{
 
 当织入的目标对象的Class类型与Pointcut所规定的类型相符时，matches方法将会返回true，否则，返回false。如果类型对我们所捕捉的Joinpoint无所谓，那么Pointcut中使用的ClassFilter可以直接使用“ClassFilter TRUE = TrueClassFilter.INSTANCE; ”。当Pointcut中返回的ClassFilter类型为该类型的实例时，Pointcut的匹配将会针对系统中所有的目标类以及它们的实例进行。
 
-### MethodMatcher
+## MethodMatcher
 
 定义如下：
 ```bash
@@ -114,7 +114,7 @@ MethodMatcher通过重载，定义了两个matches方法，而这两个方法的
 <div align="center"><img src="https://user-images.githubusercontent.com/37955886/115036842-71068080-9f00-11eb-8380-3e137795ba43.png"/></div> 
 
 
-#### StaticMethodMatcher
+### StaticMethodMatcher
 
 isRuntime返回false，表示不会考虑具体Jointpoint的方法参数，这种MethodMatcher称之为StaticMethodMatcher。
 
@@ -122,7 +122,7 @@ isRuntime返回false，表示不会考虑具体Jointpoint的方法参数，这�
 
 当为StaticMethodMatcher的时候，只有boolean matches(Method method, Class targetClass);方法执行，其结果将会成为其所属的Pointcut主要依赖。
 
-#### DynamicMethodMatcher
+### DynamicMethodMatcher
 
 isRuntime返回true时，表明该MethodMatcher将会每次都对方法调用的参数进行匹配检查，这种类型的MethodMatcher称之为DynamicMethodMatcher。
 
@@ -130,31 +130,31 @@ isRuntime返回true时，表明该MethodMatcher将会每次都对方法调用的
 
 如果一个MethodMatcher为DynamicMethodMatcher（isRuntime()返回true），并且当方法boolean matches(Method method, Class targetClass, Object[] args);也返回true的时候，三个参数的matches方法将被执行，以进行进一步检查匹配。如果  boolean matches(Method method, Class targetClass, Object[] args);返回false，则为最终结果。
 
-### 常见Pointcut
+## 常见Pointcut
 
 <div align="center"><img src="https://user-images.githubusercontent.com/37955886/115037029-a01cf200-9f00-11eb-81ca-cc1929521dd7.png"/></div> 
 
-#### NameMatchMethodPointcut
+### NameMatchMethodPointcut
 
 最简单的Pointcut实现，属于StaticMethodMatcherPointcut的子类，可以根据自身指定的一组方法名称与Joinpoint处的方法的方法名称进行匹配。但是无法对重载的方法名进行匹配，因为它仅对方法名进行匹配，不考虑参数相关信息，也没有提供可以指定参数匹配信息的途径。
 
 除了可以指定方法名进行匹配，还可以使用“ * ”通配符，实现模糊查询。
 
-#### JdkRegexpMethodPointcut和Per15RegexpMethodPointcut
+### JdkRegexpMethodPointcut和Per15RegexpMethodPointcut
 
 StaticMethodMatcher子类中有一个专门提供基于正则表达式的实现分支，以抽象类AbstractRegexpMethodPointcut为统帅。这个抽象类中声明了pattern和patterns属性，可以指定一个或者多个正则表达式的匹配模式。其下设JdkRegexpMethodPointcut和Per15RegexpMethodPointcut两种具体实现。
 
 使用正则表达式来匹配相应的Joinpint所处的方法时，正则表达式的匹配模式必须以匹配整个方法签名的形式指定，而不能仅指出匹配的方法名称。
 
-#### AnnotationMatchingPointcut
+### AnnotationMatchingPointcut
 
 根据目标对象中是否存在指定类型的注解来匹配Joinpoint，要使用该类型的Pointcut，首相需要声明相应的注解。
 
-#### ComposablePointcut
+### ComposablePointcut
 
 ComposablePointcut就是Spring AOP提供的可以进行Pointcut逻辑运算的Pointcut实现，可以进行Pointcut之间的“并”，“交”运算。
  
-#### ControlFlowPointcut
+### ControlFlowPointcut
 
 ControlFlowPointcut匹配程序的调用流程，不是对某个方法执行所在的Joinpoint处的单一特征进行匹配。
 
@@ -164,37 +164,37 @@ ControlFlowPointcut匹配程序的调用流程，不是对某个方法执行所�
 
 而通过ControlFlowPointcut，可以指定只有当TargetObject的method1方法在TargetCaller类所声明的方法中被调用的时候，才对method1方法进行拦截，其他方法调用method1的话，不对method1进行拦截。
 
-### 扩展Pointcut
+## 扩展Pointcut
 
 Spring AOP已经提供了相应的扩展抽象类支持，只需继承相应的抽象父类，然后实现或者覆写相应方法即可，
 
-#### 自定义StaticMethodMatcherPointcut
+### 自定义StaticMethodMatcherPointcut
 
 1.所有的StaticMethodMatcherPointcut的子类的ClassFilter均为ClassFilter.TRUE,即忽略类的类型匹配。如果具体子类需要对目标对象的类型进一步限制，可以通过public void setClassFilter(ClassFilter classFilter)方法设置相应的ClassFilter实现。
 
 2.因为是StaticMethodMatcherPointcut，所以需要实现两个参数的matches方法。
 
-#### 自定义DynamicMethodMatcherPointcut
+### 自定义DynamicMethodMatcherPointcut
 
 1.getClassFilter()方法返回ClassFilter.TRUE，如果需要对特定的目标对象类型进行限定，子类只需覆写这个方法。
 
 2.是DynamicMethodMatcherPointcut，所以需要实现三个参数的matches方法。
 
-### IoC容器中的Pointcut
+## IoC容器中的Pointcut
 
 Spring中的Pointcut实现都是普通的Java对象，所以可以通过Spring的IoC容器来注册并使用。
 
-## Advice
+# Advice
 
 Spring中的Advice实现全部都遵循AOP Alliance规定的接口。Advice实现了将被织入到Pointcut规定的Joinpoint处的横切逻辑，可按照其自身实例能否在目标对象类的所有实例中共享这一标准。可以划分两类，per-class类型和per-instance类型。
 
 <div align="center"><img src="https://user-images.githubusercontent.com/37955886/115044873-854e7b80-9f08-11eb-85c1-669f477073e3.png"/></div> 
 
-### per-class
+## per-class
 
 该类型的Advice的实例可以在目标对象类的所有实例之间共享。通常只提供方法拦截的功能，不会为目标对象保存任何状态或者添加新的特性。
 
-#### Before Advice
+### Before Advice
 
 Before Advice实现的横切逻辑将在相应的Joinpoint之前执行，在Before Advice执行完成之后，程序执行流程将从Joinpoint处继续执行，所以Before Advice通常不会打断程序的执行流程。如果必要，可以跑出相应异常的形式中断流程。
 
@@ -209,7 +209,7 @@ public interface MethodBeforeAdvice extends BeforeAdvice{
 ```
 MethodBeforeAdvice继承了BeforeAdvice，而BeforeAdvice只是标志接口，没有定义任何方法。
 
-#### ThrowsAdvice
+### ThrowsAdvice
 
 ThrowsAdvice通常用于对系统中特定的异常情况进行监控，以统一的方式对所发生的异常进行处理，可以在Fault Barrier的模式中使用它。
 
@@ -219,7 +219,7 @@ Spring中以接口定义org.springframework.aop.ThrowsAdvice对应通常AOP概�
 
 void afterThrowing ([Method, args, target], ThrowableSubclass);
 
-#### AfterReturningAdvice
+### AfterReturningAdvice
 
 通过Spring中的AfterReturningAdvice，可以访问当前Joinpoint的方法返回值、方法、方法参数以及所在的目标对象。该横切逻辑会在方法成功执行后进行，并且不能对方法返回值进行更改。
 
@@ -231,7 +231,7 @@ public interface AfterRerturningAdvice extends AfterAdvice{
 }
 ```
 
-#### Around Advice
+### Around Advice
 
 Spring没有直接定义对应Around Advice的实现接口，而是直接采用AOP Alliance的标准接口，即org.aopalliance.intercept.MethodInterceptor，定义如下：
 
@@ -245,13 +245,13 @@ public interface MethodInterceptor extends Interceptro{
 
 可以在proce()方法，也就是Joinpoint处的逻辑执行之前或者之后插入相应的逻辑，甚至捕获proceed()方法可能抛出的异常。
 
-### per-instance
+## per-instance
 
 per-instance类型的Advice不会再目标类所有对象实例之间共享，而是会为不同的实例对象保存各自的状态以及相关逻辑，
 
 在Spring AOP中，Introduction是唯一一种per-instance型Advice
 
-#### Introduction
+### Introduction
 
 Introduction可以在不改动目标类定义的情况下，为目标类添加新的属性以及行为。
 
@@ -270,15 +270,15 @@ IntroductionInterceptor继承了MethodInterceptor和DynamicIntroductionAdvice。
 
 <div align="center"><img src="https://user-images.githubusercontent.com/37955886/115050614-808cc600-9f0e-11eb-8a57-ac57b42e2e00.png"/></div> 
 
-##### 实现
+#### 实现
 
 实现Introduction型Advice的两条分支，以DynamicintroductionAdvice为首的动态分支和IntroductionInfo为首的静态可配置分支
 
-###### DynamicintroductionAdvice
+##### DynamicintroductionAdvice
 
 可以到运行时在判定当前Introduct可应用到的目标接口类型，不用预先设定。
 
-###### IntroductionInfo
+##### IntroductionInfo
 
 实现类必须返回预定的目标接口类型。
 
@@ -288,7 +288,7 @@ public interface IntroductionInfo{
   Class[] getInterfaces();
 }
 ```
-##### Delegatinglntroductionlnterceptor
+#### Delegatinglntroductionlnterceptor
 
 Delegatinglntroductionlnterceptor不会自己实现将要添加到目标对象上的新的逻辑行为，而是委派给其他实现类。
 
@@ -302,7 +302,7 @@ Delegatinglntroductionlnterceptor不会自己实现将要添加到目标对象�
 
 实际上，Delegatinglntroductionlnterceptor会使用他所持有的同一个接口实例，供同一目标类的所有实例共享使用。所以，没有实现per-instance型的Adcvice。
 
-##### DelegatePerTargetObjectIntroductionInterceptor
+#### DelegatePerTargetObjectIntroductionInterceptor
 
 DelegatePerTargetObjectIntroductionInterceptor会在内部持有一个目标对象与相应Introduction逻辑实现类之间的映射关系。当每个目标对象上的新定义的接口方法被调用的时候，DelegatePerTargetObjectIntroductionInterceptor会拦截这些调用，然后以目标对象实例作为键，到它持有的那个映射关系中取得对应当前目标对象实例的Introduction实现类实例。如果根据当前目标对象实例没有找到对应的Introduction实现类实例，DelegatePerTargetObjectIntroductionInterceptor会自己为其创建一个新的，然后添加到映射关系中。
 
