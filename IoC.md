@@ -76,8 +76,6 @@ newProvider.getAndPersistNews();
 #### 元数据方式（注解）
 直接在类中使用元数据信息来标注各个对象之间的依赖关系，然后由Guice框架根据这些注解所提供的信息将这些对象组装后，交给客户端对象使用。
 
-（后续详细介绍）
-
 # IoC容器
 Spring的IoC容器是一个IoC Service Provider，是一个提供IoC支持的轻量级容器。除了基本的IoC支持，它作为轻量级容器还提供了IoC之外的支持。
 <div  align="center"> <img src="https://user-images.githubusercontent.com/37955886/114380593-d4b94280-9bbc-11eb-902f-511f9ca9ffcc.png"/></div> 
@@ -99,6 +97,8 @@ ApplicationContext 在 BeanFactory 的基础上构建，是相对比较高级的
 相对于 BeanFactory 来说， ApplicationContext 要求更多的系统资源，同时，因为在启动时就完成所有初始化，容器启动时间较之 BeanFactory 也会
 长一些。在那些系统资源充足，并且要求更多功能的场景中，ApplicationContext 类型的容器是比较合适的选择。
 ```
+- [详细介绍](ApplicationContext.md#ApplicationContext)
+
 BeanFactory 和 ApplicationContext的关系:ApplicationContext 间接继承自 BeanFactory ，所以说它是构建于 BeanFactory 之上
 的IoC容器。
 <div  align="center"> <img src="https://user-images.githubusercontent.com/37955886/114400742-dbec4a80-9bd4-11eb-9693-c5764464e4fb.png"/></div> 
