@@ -1,8 +1,4 @@
-# Spring
-
-《Spring解密》、笔记及相关视频总结。
-
-## 目录
+# Spring 目录
 
 - [依赖](IoC.md#依赖)
 - [IoC](IoC.md#IoC)
