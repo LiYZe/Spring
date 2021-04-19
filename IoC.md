@@ -119,6 +119,8 @@ Spring的IoC容器所起的作用：以某种方式加载Configuration Metadata�
 
 <div align="center"><img src="https://user-images.githubusercontent.com/37955886/114668657-9003e780-9d33-11eb-87f2-a6edc9b934a6.png"/></div>
 
+- [具体过程](https://www.baidu.com/link?url=-RuUkuzHjavTnH0waGOxrSOQZJrVx1LASsUjesvmf0l-84jDopd-ImiZzfXIgTYj&wd=&eqid=a2ce241f0003371500000006607d6938)
+
 ###  BeanFactoryPostProcessor 
 
 容器扩展机制。该机制允许我们在容器实例化相应对象之前，对注册到容器的BeanDefinition所保存的信息做相应的修改。这就相当于在容器实现的第一阶段最后加入一道工序，让我们对最终的 BeanDefinition做一些额外的操作，比如修改其中bean定义的某些属性，为bean定义增加其他信息等。.
