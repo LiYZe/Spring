@@ -119,7 +119,57 @@ Spring的IoC容器所起的作用：以某种方式加载Configuration Metadata�
 
 <div align="center"><img src="https://user-images.githubusercontent.com/37955886/114668657-9003e780-9d33-11eb-87f2-a6edc9b934a6.png"/></div>
 
-- [具体过程](https://www.baidu.com/link?url=-RuUkuzHjavTnH0waGOxrSOQZJrVx1LASsUjesvmf0l-84jDopd-ImiZzfXIgTYj&wd=&eqid=a2ce241f0003371500000006607d6938)
+- [具体过程](https://zhuanlan.zhihu.com/p/50153734)
+
+### 实现过程
+
+#### 加载配置（IoC容器初始化）
+
+1.配置文件中配置监听器，并指定spring配置文件位置
+
+2.servlet容器启动（tomcat），微应用创建一个“全局上下文环境”
+
+3.容器调用XML文件中的监听器，初始化监听器与上下文环境（即IoC容器），加载指定的配置文件信息到IoC容器中。
+
+4.开始初始化
+
+5.由refresh()方法启动
+
+#### 分析配置信息（Resource定位）
+
+具体数据的入读未开始。
+
+6.构造函数调用refresh()
+
+7.refresh()调用createBeanFactory()创建容器
+
+8.refresh()调用loadBeanDefinitions(BeanFactory)方法
+
+9.loadBeanDefinitions()调用ResourceLoader得到Resouces[]数组（定位）
+
+10.loadBeanDefinitions()调用Reader读取器，读取Resouce[]中资源，利用回调把结果传入值钱建立的BeanFactory中
+
+#### 装备到BeanDefintion（BeanDefinition的载入和注册）
+
+##### 载入
+
+11.在Reader读取器中调用documentLoader（XML解析器）中的方法，获得document对象
+
+12.Reader读取器调用processBeanDefinition
+
+13.processBeanDefinition方法调用parseBeanDefinitionElement方法，解析具体元素标签
+
+14.将解析结果保存到BeanDefinitionHolder
+
+##### 注册
+
+将BeanDefinition放入HashMap中，这些BeanDefinition数据在IoC容器中通过一个HashMap（ConcurrentHashMap<String,BeanDefinition>）来保持和维护,beanName为key，beanDefinition为value。
+
+15.调用registerBeanDefinition方法解析BeanDefinitionHolder对象
+
+16.processBeanDefinition()方法中调用registerBeanDefinition(BeanDefinitionHolder)开始注册，map.put(beanName,BeanDefinition)
+
+以上过程都是在Reader读取器类中完成的。
 
 ###  BeanFactoryPostProcessor 
 
@@ -168,6 +218,20 @@ CustomEditorConfigurer是另一种类型的BeanFactoryPostProcessor实现，它�
 
 <div align="center"> <img src="https://user-images.githubusercontent.com/37955886/114673249-9052b180-9d38-11eb-8c10-23e7a5add8d9.png"/></div>
 
+## 过程
+
+- [详细过程](https://juejin.cn/post/6844903968313884686)
+
+1、	getBean()方法中，首先判断是否已经创建，且为单例，这种情况不要创建。然后根据Bean的名字获取BeanDefinition，当前取不到就到双亲BeanFactory中取，如果还取不到就顺着双亲链一直向上。
+
+2、取到BeanDefinition后，获取当前Bean所依赖的所有Bean，并递归调用getBean。
+
+3、通过createBean创建Bean的实例，最后返回Bean。
+
+4、createBean()中，调用createBeanInstance()创建Bean（默认使用CGLIB一个常用的字节码生成器类库、或使用JVM的反射）；
+
+5、createBean()中，再调用populateBean()方法，将当前Bean的依赖注入（setter、构造器等方式），通过递归调用容器的getBean方法，得到当前Bean的依赖Bean，同时也触发对依赖Bean的创建和注入。
+
 ### 隐式调用：
 
 两种情况下，BeanFactory的getBeean法可以被客户端对象隐式地调用
@@ -178,7 +242,7 @@ CustomEditorConfigurer是另一种类型的BeanFactoryPostProcessor实现，它�
 
 2.ApplicationContext会在启动阶段的活动完成之后，紧接着调用注册到该容器的所有bean定义的实例化方法getBean() 。
 
-### Bean的实例化、设置对象属性与BeanWrapper
+### Bean的实例化、设置对象属性与依赖注入
 
 容器在内部实现的时候，采用“策略模式（Strategy Pattern）”来决定采用何种方式初始化bean实例。通常，可以通过反射或者CGLIB动态字节码生成来初始化相应的bean实例或者动态生成其子类。
 
@@ -194,15 +258,15 @@ CglibSubclassingInstantiationStrategy继承了SimpleInstantiationStrategy的以�
 
 ##### 过程
 
-容器只要根据相应bean定义的BeanDefintion 取得实例化信息，结合CglibSubclassingInstantiationStrategy及不同的bean定义类型，就可以返回实例化完成的对象实例。但是，返回方式上有些“点缀”。不是直接返回构造完成的对象实例，而是以BeanWrapper对构造完成的对象实例进行包裹，返回相应的 BeanWrapper 实例。
+容器只要根据相应bean定义的BeanDefintion 取得实例化信息，结合CglibSubclassingInstantiationStrategy及不同的bean定义类型，就可以返回实例化完成的对象实例。但是，返回方式上有些“点缀”。不是直接返回构造完成的对象实例，而是以BeanWrapper对构造完成的对象实例进行包裹，返回相应的BeanWrapper实例。
 
 #### 第二步“设置对象属性”
 
-BeanWrapper接口通常在Spring框架内部使用，它有一个实现类org.springframework.beans.BeanWrapperImpl 。其作用是对某个bean进行“包裹”，然后对这个“包裹”的bean进行操作，比如设置或者获取bean的相应属性值。而在第一步结束后返回BeanWrapper实例而不是原先的对象实例。
+BeanWrapper接口通常在Spring框架内部使用，它有一个实现类org.springframework.beans.BeanWrapperImpl。其作用是对某个bean进行“包裹”，然后对这个“包裹”的bean进行操作，比如设置或者获取bean的相应属性值。而在第一步结束后返回BeanWrapper实例而不是原先的对象实例。
 
 ##### BeanWrapper
 
-BeanWrapper定义继承了org.springframework.beans.PropertyAccessor接口，可以以统一的方式对对象属性进行访问。BeanWrapper定义同时又直接或者间接继承了PropertyEditorRegistry和 TypeConverter接口。Spring会根据对象实例构造一个BeanWrapperImpl实例，然后将之前CustomEditorConfigurer注册的PropertyEditor复制一份给BeanWrapperImpl实例（这就是BeanWrapper同时又是PropertyEditorRegistry的原因）。这样，当BeanWrapper转换类型、设置对象属性值时，就不会无从下手了。
+BeanWrapper定义继承了org.springframework.beans.PropertyAccessor接口，可以以统一的方式对对象属性进行访问。BeanWrapper定义同时又直接或者间接继承了PropertyEditorRegistry和TypeConverter接口。Spring会根据对象实例构造一个BeanWrapperImpl实例，然后将之前CustomEditorConfigurer注册的PropertyEditor复制一份给BeanWrapperImpl实例（这就是BeanWrapper同时又是PropertyEditorRegistry的原因）。这样，当BeanWrapper转换类型、设置对象属性值时，就不会无从下手了。
 
 ### Aware接口
 
@@ -211,10 +275,10 @@ BeanWrapper定义继承了org.springframework.beans.PropertyAccessor接口，可
 #### BeanFactory类型的容器的Aware接口：
  
 ##### org.springframework.beans.factory.BeanNameAware
-如果Spring容器检测到当前对象实例实现了该接口，会将该对象实例的bean定义对应的 beanName 设置到当前对象实例。
+如果Spring容器检测到当前对象实例实现了该接口，会将该对象实例的bean定义对应的beanName设置到当前对象实例。
 
 ##### org.springframework.beans.factory.BeanClassLoaderAware 
-如果容器检测到当前对象实例实现了该接口，会将 对应加载当前 bean的Classloader注入当前对象实例。默认会使用加载org.springframework.util.ClassUtils类的Classloader。
+如果容器检测到当前对象实例实现了该接口，会将对应加载当前bean的Classloader注入当前对象实例。默认会使用加载org.springframework.util.ClassUtils类的Classloader。
 
 ###### org.springframework.beans.factory.BeanFactoryAware 
 在介绍方法注入的时候，我们提到过使用该接口以便每次获取prototype类型bean的不同实例。如果对象声明实现了BeanFactoryAware接口，BeanFactory容器会将自身设置到当前对象实例。这样，当前对象实例就拥有了一个BeanFactory容器的引用，并且可以对这个容器内允许访问的对象按照需要进行访问。
@@ -227,14 +291,14 @@ BeanPostProcessor会处理容器内所有符合条件的实例化后的对象实
 ```bash
 public interface BeanPostProcessor
 {
-      //执行于“ BeanPostProcessor 前置处理”
+      //执行于“BeanPostProcessor前置处理”
       Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException;
       
-      //执行于“  BeanPostProcessor 后置处理”
+      //执行于“BeanPostProcessor后置处理”
       Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException;
 }
 ```
-通常比较常见的使用 BeanPostProcessor 的场景，是处理标记接口实现类，或者为当前对象提供代理实现.
+通常比较常见的使用BeanPostProcessor的场景，是处理标记接口实现类，或者为当前对象提供代理实现.
 
 #### 自定义：
 
