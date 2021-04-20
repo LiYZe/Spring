@@ -119,7 +119,8 @@ Spring的IoC容器所起的作用：以某种方式加载Configuration Metadata�
 
 <div align="center"><img src="https://user-images.githubusercontent.com/37955886/114668657-9003e780-9d33-11eb-87f2-a6edc9b934a6.png"/></div>
 
-- [具体过程](https://zhuanlan.zhihu.com/p/50153734)
+- [具体过程1](https://zhuanlan.zhihu.com/p/50153734)
+- [具体过程2](https://juejin.cn/post/6844903967143493640)
 
 ### 实现过程
 
