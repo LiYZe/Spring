@@ -35,7 +35,7 @@
   - [Joinpoint](SpringAOP.md#Joinpoint) 
   - [Pointcut](SpringAOP.md#Pointcut) 
   - [Advice](SpringAOP.md#Advice) 
-- [Spring AOP](SpringAOP.md#Spring-AOP) 
+- [Spring MVC](SpringMVC.md#Spring-MVC) 
   - [DispatcherServlet](SpringMVC.md#DispatcherServlet) 
     - [体系结构](SpringMVC.md#体系结构) 
     - [关系](SpringMVC.md#关系) 
